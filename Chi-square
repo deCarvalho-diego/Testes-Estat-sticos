@@ -1,0 +1,43 @@
+# Import specific libraries - in this script pandas will allow to get excel file // Importanto bibliotecas específicas - neste script Pandas permitirá obter arquivos excel
+import pandas as pd
+
+#stat from bioinfokit will allow to perform chi-square test with ease // stat from bioinfokit permitirá realizar o qui-quadrado com facilidade
+from bioinfokit.analys import stat
+
+#Getting data from a excel file // Obtendo os dados de um arquivo excel
+#Here I nominated the dataframe as df, you can change for a name you want
+#Aqui eu nomeei o dataframe como df, você pode alterar para o nome que quiser
+
+df = pd.read_excel("C:/User/desktop/Python/Qui_Quadrado.xlsx") #the path from the excel file from you computer //  o caminho do arquivo excel do seu CPU. 
+
+#First we have to create a crosstab using crosstab function from pandas // primeiramente devemos criar uma crosstab usando a função crosstab do pandas
+
+
+ctab = pd.crosstab(df.SEXO, df.Q_1)
+
+#Para cada variável fazer o mesmo
+ctab2 = pd.crosstab(df.SEXO, df.Q_2)
+
+#Faz o teste de qui-quadrado (Trocar o nome da cross tab)
+res = stat()
+res.chisq (df = ctab)
+print(res.summary)
+
+#Contagem e contabilização de frequência relativa de uma variável
+#Localizar e substituir o texto para fazer para todas variáveis de interesse
+
+df['SEXO'].value_counts() #Contagem Simples
+df['SEXO'].value_counts(normalize = True) * 100 #Contagem em %
+
+#Para construir uma tabela utilizável
+contagem = df['SEXO'].value_counts() #Colocar dados numa variável
+porcentagem = df['SEXO'].value_counts(normalize = True) * 100 
+
+#Função de montagem de novo DF do Pandas
+tab_freq = pd.DataFrame({'Freq_Absoluta': contagem, 'Freq_Relativa (%)': porcentagem})
+tab_freq.rename_axis('Sexo', axis= 'columns', inplace = True) #Coloca índice
+
+df.groupby(['SEXO']).count()
+
+#Regra de Três para definir a porcentagem por questão
+pd.crosstab(df.SEXO, df.Q_1).apply(lambda x: round(x / x.sum() * 100, 2), axis = 1)
